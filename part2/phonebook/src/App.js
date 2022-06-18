@@ -1,17 +1,14 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+import personService from './services/persons'
 
 const Header = ({ header }) => <h1>{header}</h1>
 
-const Person = ({ person }) => <li>{person.name} {person.number}</li>
-
-const Persons = ({ persons }) => {
+const Person = ({ person, deletePerson }) => {
   return (
-    <ul>
-        {persons.map(person =>
-          <Person key={person.id} person={person} />
-        )}
-    </ul>
+    <li>
+      {person.name} {person.number}
+      <button onClick={deletePerson}>delete</button>
+    </li>
   )
 }
 
@@ -31,12 +28,11 @@ const Form = (props) => {
   )
 }
 
-const Filter = ({ handleSearch, searchResults}) => {
+const Filter = ({ search, handleSearch }) => {
   return (
-    <div>
-      <input onChange={handleSearch} />
-      <Persons persons={searchResults} />
-    </div>
+    <label>
+      filter shown with <input value={search} onChange={handleSearch} />
+    </label>
   )
 }
 
@@ -44,13 +40,15 @@ const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [searchResults, setSearchResults] = useState([...persons])
+  const [search, setSearch] = useState('')
+  const [personsToShow, setPersonsToShow] = useState([])
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(persons => {
+        setPersons(persons)
+        setPersonsToShow(persons)
       })
   }, [])
   
@@ -58,19 +56,45 @@ const App = () => {
     event.preventDefault()
     const newPerson = {
       name: newName,
-      number: newNumber,
-      id: persons.length + 1
+      number: newNumber
     }
-    
-    if (persons.some(person => JSON.stringify(person) === JSON.stringify(newPerson))) {
-      alert(`${newPerson.name} is already added to phonebook`)
-      return
+    const existingPerson = persons.find(person => person.name === newPerson.name)
+
+    if (!existingPerson) {
+      personService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setPersonsToShow(persons.concat(returnedPerson))
+      })
+    } else {
+      if (window.confirm(
+        `${existingPerson.name} is already added to phonebook, replace the old number with a new one?`
+      )) {
+        personService
+          .update(existingPerson.id, newPerson)
+          .then(returnedPerson => {
+            const updatedPersons = persons.map(person => person.id !== existingPerson.id ? person : returnedPerson)
+            setPersons(updatedPersons)
+            setPersonsToShow(updatedPersons)
+          })
+      }
     }
-    
-    setPersons(persons.concat(newPerson))
-    setSearchResults(persons.concat(newPerson))
+
     setNewName('')
     setNewNumber('')
+  }
+
+  const deleteName = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          const updatedPersons = persons.filter(person => person.id !== id)
+          setPersons(updatedPersons)
+          setPersonsToShow(updatedPersons)
+        })
+    }
   }
   
   const handleNameChange = (event) => {
@@ -82,19 +106,24 @@ const App = () => {
   }
   
   const handleSearch = (event) => {
-    const search = event.target.value.toLowerCase()
-    const searchCopy = persons.filter(res => res.name.toLowerCase().includes(search))
-    setSearchResults(searchCopy)
+    const search = event.target.value
+    setSearch(search)
+    const searchCopy = persons.filter(person => person.name.toLowerCase().includes(search))
+    setPersonsToShow(searchCopy)
   }
 
   return (
     <div>
       <Header header='Phonebook' />
-      <Filter handleSearch={handleSearch} searchResults={searchResults} />
+      <Filter search={search} handleSearch={handleSearch} />
       <Header header='Add a new' />
       <Form addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <Header header='Numbers' />
-      <Persons persons={persons} />
+      <ul>
+        {personsToShow.map(person => 
+          <Person key={person.id} person={person} deletePerson={() => deleteName(person.id, person.name)} />  
+        )}
+      </ul>
     </div>
   )
 }
