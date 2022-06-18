@@ -36,12 +36,25 @@ const Filter = ({ search, handleSearch }) => {
   )
 }
 
+const Notification = ({ type, message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={`${type} message`}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
   const [personsToShow, setPersonsToShow] = useState([])
+  const [message, setMessage] = useState({ type: '', text: null })
 
   useEffect(() => {
     personService
@@ -51,6 +64,12 @@ const App = () => {
         setPersonsToShow(persons)
       })
   }, [])
+
+  const removeMessage = () => {
+    setTimeout(() => {
+      setMessage({ type: '', text: null })
+    }, 5000);
+  }
   
   const addName = (event) => {
     event.preventDefault()
@@ -66,6 +85,7 @@ const App = () => {
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
         setPersonsToShow(persons.concat(returnedPerson))
+        setMessage({ type:'success', text:`Added ${returnedPerson.name}` })
       })
     } else {
       if (window.confirm(
@@ -77,12 +97,20 @@ const App = () => {
             const updatedPersons = persons.map(person => person.id !== existingPerson.id ? person : returnedPerson)
             setPersons(updatedPersons)
             setPersonsToShow(updatedPersons)
+            setMessage({ type:'success', text:`Updated ${returnedPerson.name}` })
+          })
+          .catch(() => {
+            setMessage({ type:'error', text:`Information of ${existingPerson.name} has already been removed from server` })
+            const updatedPersons = persons.filter(person => existingPerson.id !== person.id)
+            setPersons(updatedPersons)
+            setPersonsToShow(updatedPersons)
           })
       }
     }
 
     setNewName('')
     setNewNumber('')
+    removeMessage()
   }
 
   const deleteName = (id, name) => {
@@ -115,6 +143,7 @@ const App = () => {
   return (
     <div>
       <Header header='Phonebook' />
+      <Notification type={message.type} message={message.text} />
       <Filter search={search} handleSearch={handleSearch} />
       <Header header='Add a new' />
       <Form addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
