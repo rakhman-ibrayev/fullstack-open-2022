@@ -46,6 +46,9 @@ const App = () => {
 					setPersons(persons.concat(returnedPerson))
 					notify({ type: 'success', text: `Added ${returnedPerson.name}` })
 				})
+				.catch(error => {
+					notify({ type: 'error', text: error.response.data.error })
+				})
 
 			return
 		}
@@ -60,10 +63,8 @@ const App = () => {
 					setPersons(updatedPersons)
 					notify({ type: 'success', text: `Updated ${returnedPerson.name}` })
 				})
-				.catch(() => {
-					notify({ type: 'error', text: `Information of ${existingPerson.name} has already been removed from server` })
-					const updatedPersons = persons.filter(p => existingPerson.id !== p.id)
-					setPersons(updatedPersons)
+				.catch(error => {
+					notify({ type: 'error', text: error.response.data.error })
 				})
 		}
 	}
