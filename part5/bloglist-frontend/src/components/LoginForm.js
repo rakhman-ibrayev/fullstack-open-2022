@@ -2,11 +2,12 @@ import { useState } from 'react'
 import Notification from './Notification'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 const LoginForm = ({ setUser }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [message, setMessage] = useState({ text: null, type: ''})
+    const [message, setMessage] = useState({ text: null, type: '' })
 
     const handleLogin = async event => {
         event.preventDefault()
@@ -25,7 +26,7 @@ const LoginForm = ({ setUser }) => {
             setPassword('')
         } catch (exception) {
             setMessage({
-                text: `wrong username or password`,
+                text: 'wrong username or password',
                 type: 'error'
             })
             setTimeout(() => {
@@ -61,6 +62,10 @@ const LoginForm = ({ setUser }) => {
         </div>
         <button type="submit">login</button>
     </form>)
+}
+
+LoginForm.propTypes = {
+    setUser: PropTypes.func.isRequired
 }
 
 export default LoginForm
