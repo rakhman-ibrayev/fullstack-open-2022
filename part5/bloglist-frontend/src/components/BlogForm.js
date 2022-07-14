@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const BlogForm = ({ createBlog, setMessage }) => {
+const BlogForm = ({ createBlog }) => {
     const [newBlog, setNewBlog] = useState({
         title: '', author: '', url: ''
     })
@@ -15,14 +15,6 @@ const BlogForm = ({ createBlog, setMessage }) => {
         }
 
         createBlog(blogObject)
-
-        setMessage({
-            text: `a new blog ${blogObject.title} by ${blogObject.author} added`,
-            type: 'success'
-        })
-        setTimeout(() => {
-            setMessage({ text: null, type: '' })
-        }, 5000)
 
         setNewBlog({
             title: '', author: '', url: ''
@@ -44,6 +36,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
                     name="title"
                     value={newBlog.title}
                     onChange={handleBlogInput}
+                    placeholder="title"
                 />
             </div>
             <div>
@@ -53,6 +46,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
                     name="author"
                     value={newBlog.author}
                     onChange={handleBlogInput}
+                    placeholder="author"
                 />
             </div>
             <div>
@@ -62,6 +56,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
                     name="url"
                     value={newBlog.url}
                     onChange={handleBlogInput}
+                    placeholder="url"
                 />
             </div>
             <button type="submit">create</button>

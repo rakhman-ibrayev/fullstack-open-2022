@@ -43,14 +43,12 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
             </div>
 
             {visible ?
-                <div>
+                <div className="togglable-content">
                     <ul>
                         <li>{blog.url}</li>
                         <li>
                             likes {blog.likes}
-                            <button onClick={likeBlog}>
-                                like
-                            </button>
+                            <button onClick={likeBlog}>like</button>
                         </li>
                         <li>{blog.user.name}</li>
                     </ul>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
-import Toggleable from './components/Togglable'
+import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -39,6 +39,14 @@ const App = () => {
             .create(blogObject)
             .then(returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
+
+                setMessage({
+                    text: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+                    type: 'success'
+                })
+                setTimeout(() => {
+                    setMessage({ text: null, type: '' })
+                }, 5000)
             })
     }
 
@@ -59,12 +67,12 @@ const App = () => {
     }
 
     const blogForm = () => (
-        <Toggleable buttonText='new blog' ref={blogFormRef}>
+        <Togglable buttonText='new blog' ref={blogFormRef}>
             <BlogForm
                 createBlog={addBlog}
                 setMessage={setMessage}
             />
-        </Toggleable>
+        </Togglable>
     )
 
     if (user === null) {
