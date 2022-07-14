@@ -16,13 +16,13 @@ blogsRouter.post('/', middleware.userExtractor, async (req, res) => {
         return res.status(400).json({ error: 'contents are missing' })
     }
 
-    const newBlog = new Blog({
+    const newBlog = await new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes || 0,
         user: user._id
-    })
+    }).populate('user', { username: 1, name: 1 })
 
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
