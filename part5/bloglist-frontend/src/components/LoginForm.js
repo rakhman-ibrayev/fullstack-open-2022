@@ -35,33 +35,37 @@ const LoginForm = ({ setUser }) => {
         }
     }
 
-    return (<form onSubmit={handleLogin}>
-        <h2>log in to application</h2>
-        <Notification text={message.text} type={message.type} />
-        <div>
-            username
-            <input
-                type="text"
-                name="username"
-                value={username}
-                onChange={
-                    ({ target }) => setUsername(target.value)
-                }
-            />
-        </div>
-        <div>
-            password
-            <input
-                type="password"
-                name="password"
-                value={password}
-                onChange={
-                    ({ target }) => setPassword(target.value)
-                }
-            />
-        </div>
-        <button type="submit">login</button>
-    </form>)
+    return (
+        <form className="login-form" onSubmit={handleLogin}>
+            <h2>log in to application</h2>
+            <Notification text={message.text} type={message.type} />
+            <div>
+                username
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={username}
+                    onChange={
+                        ({ target }) => setUsername(target.value)
+                    }
+                />
+            </div>
+            <div>
+                password
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={password}
+                    onChange={
+                        ({ target }) => setPassword(target.value)
+                    }
+                />
+            </div>
+            <button className="btn-login" type="submit">login</button>
+        </form>
+    )
 }
 
 LoginForm.propTypes = {
