@@ -1,44 +1,18 @@
 import { useState } from 'react'
-import Notification from './Notification'
-import loginService from '../services/login'
-import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ onLogin }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [message, setMessage] = useState({ text: null, type: '' })
 
-    const handleLogin = async event => {
+    const handleLogin = event => {
         event.preventDefault()
-
-        try {
-            const user = await loginService.login({
-                username, password,
-            })
-
-            window.localStorage.setItem(
-                'loggedBloglistappUser', JSON.stringify(user)
-            )
-            blogService.setToken(user.token)
-            setUser(user)
-            setUsername('')
-            setPassword('')
-        } catch (exception) {
-            setMessage({
-                text: 'wrong username or password',
-                type: 'error'
-            })
-            setTimeout(() => {
-                setMessage({ text: null, type: '' })
-            }, 5000)
-        }
+        onLogin(username, password)
     }
 
     return (
         <form className="login-form" onSubmit={handleLogin}>
             <h2>log in to application</h2>
-            <Notification text={message.text} type={message.type} />
             <div>
                 username
                 <input
@@ -69,7 +43,7 @@ const LoginForm = ({ setUser }) => {
 }
 
 LoginForm.propTypes = {
-    setUser: PropTypes.func.isRequired
+    onLogin: PropTypes.func.isRequired
 }
 
 export default LoginForm

@@ -4,10 +4,12 @@ import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+
 import blogService from './services/blogs'
+import userService from './services/user'
+import loginService from './services/login'
 
 const App = () => {
-    // states for blogs and a user
     const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
     const [message, setMessage] = useState({ text: null, type: '' })
@@ -20,33 +22,48 @@ const App = () => {
     }, [])
 
     useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            blogService.setToken(user.token)
+        const userFromStorage = userService.getUser()
+        if (userFromStorage) {
+            setUser(userFromStorage)
         }
     }, [])
 
-    const handleLogout = () => {
-        window.localStorage.removeItem('loggedBloglistappUser')
+    const notify = ({ text, type }) => {
+        setMessage({ text, type })
+        setTimeout(() => {
+            setMessage({ text: null, type: '' })
+        }, 5000)
+    }
+
+    const login = (username, password) => {
+        loginService.login({
+            username, password
+        }).then(user => {
+            setUser(user)
+            userService.setUser(user)
+        }).catch(() => {
+            notify({
+                text: 'wrong username or password',
+                type: 'error'
+            })
+        })
+    }
+
+    const logout = () => {
+        userService.clearUser()
         setUser(null)
     }
 
-    const addBlog = (blogObject) => {
-        blogFormRef.current.toggleVisibility()
+    const addBlog = blogObject => {
         blogService
             .create(blogObject)
             .then(returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
-
-                setMessage({
+                notify({
                     text: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
                     type: 'success'
                 })
-                setTimeout(() => {
-                    setMessage({ text: null, type: '' })
-                }, 5000)
+                blogFormRef.current.toggleVisibility()
             })
     }
 
@@ -58,7 +75,7 @@ const App = () => {
             })
     }
 
-    const deleteBlog = (id) => {
+    const deleteBlog = id => {
         blogService
             .remove(id)
             .then(() => {
@@ -77,9 +94,10 @@ const App = () => {
 
     if (user === null) {
         return (
-            <LoginForm
-                setUser={setUser}
-            />
+            <div>
+                <Notification text={message.text} type={message.type} />
+                <LoginForm onLogin={login} />
+            </div>
         )
     }
 
@@ -91,7 +109,7 @@ const App = () => {
 
             <p>
                 {user.name} logged in
-                <button onClick={handleLogout}>logout</button>
+                <button onClick={logout}>logout</button>
             </p>
 
             {blogForm()}

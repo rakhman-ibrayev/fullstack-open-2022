@@ -93,7 +93,7 @@ describe('Blog app', function () {
             cy.get('.togglable-content').should('not.contain', 'remove')
         })
 
-        it.only('Blogs are given in descending order by number of likes', function () {
+        it('Blogs are given in descending order by number of likes', function () {
             cy.createBlog({
                 title: 'first',
                 author: '1',
