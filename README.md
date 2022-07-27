@@ -1,4 +1,4 @@
-# [Full Stack Open 2022](https://fullstackopen.com/en/)
+## [Full Stack Open 2022](https://fullstackopen.com/en/)
 
 In this repository I will be recording my progress completing UH's Full Stack Open 2022 course. This course is held at the University of Helsinki Depratment of Computer Science.
 
@@ -6,7 +6,13 @@ The course serves as an introduction to modern web application development with 
 
 It also covers testing, configuration and environment management, and the use of MongoDB for storing the application’s data.
 
-# [Course Contents](https://fullstackopen.com/en/#course-contents)
+## [Course Certificate](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/0c2b71f2ff441933c9c102f6825660de)
+
+The following certificate is given according to [Open University's policies](https://fullstackopen.com/en/part0/general_info#parts-and-completion) after completing the first 7 [Parts](https://fullstackopen.com/en/#course-contents) of the course.
+
+![certificate of completion](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/0c2b71f2ff441933c9c102f6825660de)
+
+## [Course Contents](https://fullstackopen.com/en/#course-contents)
 
 ### [Part 0 - Fundamentals of Web apps](https://fullstackopen.com/en/part0)
 
