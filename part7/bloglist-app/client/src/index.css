@@ -1,0 +1,25 @@
+.nav {
+    display: flex;
+    gap: 16px;
+    padding: 8px;
+}
+
+.loggedin {
+    margin-left: auto;
+}
+
+p {
+    margin: 0;
+}
+
+.error {
+    border: 1px solid red;
+    color: red;
+    background-color: grey;
+}
+
+.success {
+    border: 1px solid green;
+    color: green;
+    background-color: grey;
+}
